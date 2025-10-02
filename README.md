@@ -1,56 +1,51 @@
-# UFC Data Analysis
+# UFC Analysis (Streamlit)
 
-This repository explores modern UFC fight data to understand which in-cage stats correlate with winning. It includes lightweight scrapers to refresh the dataset and a polished analysis notebook that produces hiring-portfolio-ready visuals.
+Live-scraped UFC fight analytics focused on **winner vs loser** stats.
+The app pulls completed events directly from **UFC Stats** and presents
+simple, readable charts suitable for a portfolio/demo.
 
-## Repository Layout
-- `scrapers/`: Stand-alone scripts (sourced from [Fatbardh Smajli's Kaggle project](https://www.kaggle.com/datasets/fatismajli/ufc-data)) for collecting fight- and fighter-level data from ufcstats.com.
-- `ufc_data/`: Cached CSV exports created by the scrapers (`ufc_event_data.csv`, `ufc_fighters.csv`).
-- `analysis_portfolio_v2.ipynb`: Portfolio-ready notebook that cleans the raw tables, engineers winner/loser features, and visualizes key trends.
-- `analysis_portfolio_v1.ipynb`: Earlier draft kept for reference.
+## What’s in here
+- `scrapers/` — pure scraping functions that **return DataFrames** (no CSV writing).
+- `streamlit/app.py` — the Streamlit UI (caching, progress bar, filters).
+- `ufc_data/` — optional cached CSVs copied from the legacy repo (the app does **not** use them).
 
-## Getting Started
-1. **Install Python 3.9+** and create a virtual environment if desired.
-2. **Install dependencies:**
-   ```bash
-   pip install pandas matplotlib seaborn requests beautifulsoup4 tqdm jupyter
-   ```
-3. (Optional) Launch Jupyter Lab/Notebook to browse the analyses:
-   ```bash
-   jupyter lab
-   ```
+## Why this repo
+The original code wrote CSVs and relied on them for notebooks. This refactor
+keeps the scrapers reusable and lets the Streamlit app fetch **fresh data in-memory**
+without touching your notebook CSVs.
 
-## Refreshing the Data
-> The bundled CSVs cover events through 30 Aug (most recent update when the notebook was last run). Re-run the scrapers whenever you need fresh data.
-
-The scrapers write directly into `ufc_data/` and will overwrite existing files. Running both scripts is enough to fully refresh the dataset.
-
+## Run it
 ```bash
-python3 scrapers/events_scraper.py    # fight-level stats per event
-python3 scrapers/fighter_data_scraper.py  # roster snapshot with physical attributes
+# 1) Create a virtual env (recommended)
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# 2) Install deps
+pip install -r requirements.txt
+
+# 3) Launch the app
+streamlit run streamlit/app.py
 ```
 
-Each script iterates over every UFC event/fighter page, so expect a few minutes of network traffic. Be considerate when scraping; throttle manually if you encounter rate limits.
+## In the app
+- **Fetch scope** (sidebar): choose **Latest N** events (fast) or **Since date**.
+- Progress bar while scraping; results are **cached** for the same parameters.
+- Filters for **date range** and **weight class**.
+- Charts: Winner vs Loser means, Outcome distribution, Submission distribution.
+- Men’s weight-class ordering used for nicer menus.
 
-## Notebook Workflow
-The main analysis lives in `analysis_portfolio_v2.ipynb`. It is structured for readability with short sections and explicit takeaways.
+## Notes & sources
+- Events and results are scraped from the UFC Stats *Completed Events* page. See the official listing for current events and historical archive. 
+- The scraper structure here was inspired by community datasets (e.g., Kaggle projects that source from UFC Stats).
+- Please be considerate to the UFC Stats website. Add delays or reduce fetch scope if you hit blocks.
 
-High-level flow:
-1. **Load & preview** `ufc_event_data.csv` and `ufc_fighters.csv`.
-2. **Clean & standardize** columns (dates, winner/loser stat splits, missing values) while keeping the code resilient to column-name drift.
-3. **Explore** descriptive statistics and correlations for winner vs. loser striking/grappling metrics.
-4. **Visualize outcomes** such as finish method distributions and submission breakdowns (with grouped "Other" category for readability).
+**Official sources**
+- UFC Stats — Completed Events: https://ufcstats.com/statistics/events/completed
+- UFC Weight Classes overview: https://www.ufc.com/news/understanding-ufc-weight-classes-and-weigh-ins
 
-Key insights surfaced by the current dataset:
-- Winners typically lead clearly in significant strikes, takedowns landed, submission attempts, and knockdowns.
-- Decisions remain the dominant fight outcome, with KO/TKOs and submissions forming most of the remaining finishes.
-- Rear naked chokes and guillotine variants top the submission leaderboard, while rarer subs are rolled into an "Other" bucket to keep charts legible.
-
-Run the notebook top-to-bottom after refreshing the data to reproduce the figures. The code depends only on the CSVs shipped in `ufc_data/`.
-
-## Extending the Project
-- Add feature engineering (e.g., per-minute rates, fighter reach/height merges) to deepen the winner vs. loser analysis.
-- Introduce automated tests or data validation to flag unexpected schema changes from the UFC Stats site.
-- Export visuals to image files or dashboards for easier sharing.
-
-## Attribution
-The scraping logic is adapted (with credit noted in-source) from Fatbardh Smajli's Kaggle dataset. All analysis code and commentary in this repository build on those raw exports.
+## Requirements
+See `requirements.txt` for exact versions. Core libs:
+- requests, beautifulsoup4
+- pandas, numpy
+- matplotlib
+- streamlit
+- tqdm (optional; not used in the UI path)
