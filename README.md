@@ -1,12 +1,11 @@
 # UFC Data Analysis
 
-This repository explores modern UFC fight data to understand which in-cage stats correlate with winning. It includes lightweight scrapers to refresh the dataset and a polished analysis notebook that produces hiring-portfolio-ready visuals.
+This repository explores modern UFC fight data (2020 - 30 August 2025) to understand which in-cage stats correlate with winning. I analysed modern UFC data because I'm more familiar with the modern era and also the fights are more technical compared to earlier eras of the UFC.
 
 ## Repository Layout
 - `scrapers/`: Stand-alone scripts (sourced from [Fatbardh Smajli's Kaggle project](https://www.kaggle.com/datasets/fatismajli/ufc-data)) for collecting fight- and fighter-level data from ufcstats.com.
 - `ufc_data/`: Cached CSV exports created by the scrapers (`ufc_event_data.csv`, `ufc_fighters.csv`).
-- `analysis_portfolio_v2.ipynb`: Portfolio-ready notebook that cleans the raw tables, engineers winner/loser features, and visualizes key trends.
-- `analysis_portfolio_v1.ipynb`: Earlier draft kept for reference.
+- `analysis_portfolio.ipynb`: Portfolio-ready notebook that cleans the raw tables, engineers winner/loser features, and visualizes key trends.
 
 ## Getting Started
 1. **Install Python 3.9+** and create a virtual environment if desired.
